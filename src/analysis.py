@@ -20,9 +20,7 @@ def load_data(path: str | Path) -> pd.DataFrame:
     """Load CSV data and enforce required schema without hiding data-quality issues."""
     path = Path(path)
     if not path.exists():
-        raise FileNotFoundError(
-            f"Dataset not found at {path}. Run this from the project root or pass the CSV path."
-        )
+        raise FileNotFoundError(f"Dataset not found at {path}. Run from the project root or pass the CSV path.")
     df = pd.read_csv(path)
     missing = REQUIRED_COLUMNS.difference(df.columns)
     if missing:
@@ -35,7 +33,7 @@ def load_data(path: str | Path) -> pd.DataFrame:
 
 
 def quality_report(df: pd.DataFrame) -> pd.DataFrame:
-    """Summarize completeness and duplicate counts for every column."""
+    """Summarize completeness and distinct non-null values for each column."""
     report = pd.DataFrame({
         "dtype": df.dtypes.astype(str),
         "missing_count": df.isna().sum(),
@@ -47,8 +45,8 @@ def quality_report(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def validation_checks(df: pd.DataFrame) -> dict[str, int]:
-    """Return counts of records needing investigation; does not mutate or auto-correct."""
-    checks = {
+    """Count records needing investigation; never silently auto-correct data."""
+    return {
         "row_count": len(df),
         "duplicate_full_rows": int(df.duplicated().sum()),
         "duplicate_order_ids": int(df["Order_ID"].duplicated().sum()),
@@ -62,15 +60,13 @@ def validation_checks(df: pd.DataFrame) -> dict[str, int]:
         "missing_profit": int(df["Profit"].isna().sum()),
         "missing_shipping_cost": int(df["Shipping_Cost"].isna().sum()),
     }
-    return checks
 
 
 def add_analysis_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Return a copy with time and lead-time fields for aggregation."""
+    """Add monthly and shipping-latency fields without modifying the input."""
     out = df.copy()
     out["Order_Month"] = out["Order_Date"].dt.to_period("M").dt.to_timestamp()
     out["Ship_Lead_Days"] = (out["Ship_Date"] - out["Order_Date"]).dt.days
-    # Use total-level aggregation for margin; row-level values are diagnostic only.
     out["Row_Profit_Margin"] = out["Profit"] / out["Sales"].where(out["Sales"].ne(0))
     out["Discount_Band"] = pd.cut(
         out["Discount"],
@@ -81,11 +77,8 @@ def add_analysis_features(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def summarize_by(
-    df: pd.DataFrame,
-    dimensions: str | Iterable[str],
-) -> pd.DataFrame:
-    """Aggregate core metrics and expose profit coverage for each group."""
+def summarize_by(df: pd.DataFrame, dimensions: str | Iterable[str]) -> pd.DataFrame:
+    """Aggregate sales, profit, units, shipping costs, order count and profit coverage."""
     if isinstance(dimensions, str):
         dimensions = [dimensions]
     dimensions = list(dimensions)
