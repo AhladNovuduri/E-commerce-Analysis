@@ -12,50 +12,48 @@ Exploratory data analysis project using Python and Jupyter Notebook, supported b
 | `E-Commerce EDA Report.pdf` | Supporting EDA report |
 | `EDA_Exe_Summary.pdf` | Executive summary |
 | `DATA ANALYST PROJECT.docx` | Supporting project document |
-| `requirments.txt` | Existing dependency list; filename is misspelled |
+| `requirements.txt` | Python dependencies for the EDA notebook |
 
 ## Technology
 
-Python, Pandas, NumPy, Matplotlib, Seaborn, and Jupyter Notebook (as listed in the dependency file).
+Python, Pandas, NumPy, Matplotlib, and Jupyter Notebook.
 
-## Getting Started
+## Reproducible EDA
 
-The notebook is not currently reproducible from a clean checkout: its first data-loading cell references `ecommerce_dirty_dataset.csv`, which is not included in this repository. The committed `e-commerce_cleaned.csv` is available, but the notebook's later cells repeat cleaning operations and must not be run against it without refactoring the notebook. The dependency list also omits SciPy, which the notebook imports.
+`Work_File.ipynb` now performs exploratory analysis directly on the committed `e-commerce_cleaned.csv`. It does not rerun undocumented cleaning steps or claim that the original preprocessing can be reproduced. The original `ecommerce_dirty_dataset.csv` is absent.
 
-Do not interpret the current notebook's charts or recommendations as validated results until the input file, execution path, and analysis logic have been repaired and checked.
+Create an environment and install the notebook's dependencies:
 
 ```bash
 git clone https://github.com/AhladNovuduri/E-commerce-Analysis.git
 cd E-commerce-Analysis
-# Open e-commerce_cleaned.csv to inspect the committed processed data.
-# The notebook is not yet runnable from a clean checkout.
+python -m venv .venv
+# Activate the environment for your operating system.
+python -m pip install -r requirements.txt
+jupyter notebook Work_File.ipynb
 ```
 
-## Analysis Documentation To Complete
+Run the notebook from the repository root. It reports the inspected data-quality checks and generates descriptive tables and charts. It preserves all rows and values; it does not impute, cap, or remove observations.
 
-Before publishing specific conclusions, document:
+The refactored notebook was executed top-to-bottom from a clean kernel with the dependencies in `requirements.txt` (10 code cells; no execution errors). On the committed file it reports 100,000 rows and 23 columns, zero exact duplicate rows, no missing or repeated `Order_ID`, no missing customer IDs, no missing or unparseable order/ship dates, and no ship-before-order records. These checks validate the file's internal consistency only; they do not establish the original source or business meaning.
 
-- Dataset source, license, collection date, and attribution.
-- Dataset grain, row/column counts, and data dictionary.
-- Cleaning and feature-engineering decisions.
-- EDA questions and methods.
-- Reproducible charts and verified numerical findings.
-- Limitations, sampling caveats, and future work.
+## Data provenance and limitations
+
+The dataset source, license, collection context, intended row grain, and original cleaning steps are not documented. Numeric units and the definitions of sales and profit also need confirmation. Treat results as descriptive of the committed processed file, not as causal or independently verified business findings.
 
 ## Reproducibility & Quality Checks
 
-- [ ] Verify the notebook executes top-to-bottom from a clean kernel.
-- [ ] Confirm all file paths are relative and case-correct.
-- [ ] Remove or explain stale notebook outputs.
-- [ ] Correct the dependency filename in a separate cleanup change.
-- [ ] Add a concise environment/dependency specification.
-- [ ] Add data provenance and licensing information.
+- [x] Verify the notebook executes top-to-bottom from a clean kernel in an environment with `requirements.txt` installed.
+- [x] Confirm the source notebook reads the CSV by a repository-relative path.
+- [x] Keep the source notebook free of saved execution outputs; the local verification copy is separate.
+- [x] Use a correctly named dependency specification containing only packages used by the notebook.
+- [ ] Add verified data provenance and licensing information.
 - [ ] Add screenshots only from the actual notebook/report.
 - [ ] Confirm whether the cleaned dataset may be redistributed.
-- [ ] Establish whether one row is an order, an order line, or another grain before deduplicating by `Order_ID`.
-- [ ] Replace undocumented value changes and IQR-mean imputation with source-backed, reviewable rules.
-- [ ] Fix monthly grouping so month values are not combined across years.
-- [ ] Correct the top-customer contribution calculation and document the repeat-customer threshold.
+- [x] Preserve rows and do not deduplicate by `Order_ID` until the source grain is established.
+- [x] Keep the analysis on the committed processed data and avoid repeating undocumented cleaning transformations.
+- [x] Group time trends by calendar month and year.
+- [x] Remove unverified customer-contribution and repeat-customer claims from the rewritten notebook.
 
 ## Future Improvements
 
