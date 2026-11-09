@@ -2,7 +2,6 @@
 
 Exploratory data analysis project using Python and Jupyter Notebook, supported by a cleaned dataset and exported analytical reports.
 
-> **Evidence note:** This README is based on the repository inventory. The notebook's code cells, dataset provenance, analytical outputs, and numerical conclusions have not yet been independently inspected. Findings and methodology are intentionally not invented.
 
 ## Project Contents
 
@@ -21,18 +20,15 @@ Python, Pandas, NumPy, Matplotlib, Seaborn, and Jupyter Notebook (as listed in t
 
 ## Getting Started
 
-1. Clone the repository.
-2. Create and activate a virtual environment.
-3. Install dependencies.
-4. Open the notebook in Jupyter.
+The notebook is not currently reproducible from a clean checkout: its first data-loading cell references `ecommerce_dirty_dataset.csv`, which is not included in this repository. The committed `e-commerce_cleaned.csv` is available, but the notebook's later cells repeat cleaning operations and must not be run against it without refactoring the notebook. The dependency list also omits SciPy, which the notebook imports.
+
+Do not interpret the current notebook's charts or recommendations as validated results until the input file, execution path, and analysis logic have been repaired and checked.
 
 ```bash
 git clone https://github.com/AhladNovuduri/E-commerce-Analysis.git
 cd E-commerce-Analysis
-python -m venv .venv
-# Activate the environment for your operating system.
-pip install -r requirments.txt
-jupyter notebook Work_File.ipynb
+# Open e-commerce_cleaned.csv to inspect the committed processed data.
+# The notebook is not yet runnable from a clean checkout.
 ```
 
 ## Analysis Documentation To Complete
@@ -56,6 +52,10 @@ Before publishing specific conclusions, document:
 - [ ] Add data provenance and licensing information.
 - [ ] Add screenshots only from the actual notebook/report.
 - [ ] Confirm whether the cleaned dataset may be redistributed.
+- [ ] Establish whether one row is an order, an order line, or another grain before deduplicating by `Order_ID`.
+- [ ] Replace undocumented value changes and IQR-mean imputation with source-backed, reviewable rules.
+- [ ] Fix monthly grouping so month values are not combined across years.
+- [ ] Correct the top-customer contribution calculation and document the repeat-customer threshold.
 
 ## Future Improvements
 
@@ -71,3 +71,4 @@ No repository license was visible in the inspected file inventory. Do not assume
 ## Author
 
 **Ahlad Novuduri** · [GitHub](https://github.com/AhladNovuduri)
+
